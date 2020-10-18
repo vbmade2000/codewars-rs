@@ -1,9 +1,11 @@
+pub mod err;
 pub mod user;
 
 pub mod codewars {
 
+    use crate::err::Error;
     use crate::user::User;
-    use log::{info, warn};
+    use reqwest::StatusCode;
     use serde_json::Value;
 
     // Main struct that contains all the methods
@@ -18,7 +20,7 @@ pub mod codewars {
         }
 
         /// Retrieve user information. This method doesn't require use of token.
-        pub fn get_user(username: String) {
+        pub fn get_user(username: String) -> Result<User, Error> {
             let url = format!("https://www.codewars.com/api/v1/users/{}", username);
 
             // Call the URL
@@ -28,7 +30,6 @@ pub mod codewars {
             match user_result {
                 Ok(response) => {
                     let mut my_user = User::new();
-
                     // We create User instance only if user details successfully retrieved
                     if response.status().is_success() {
                         let user_json: Value = response.json().unwrap();
@@ -61,10 +62,22 @@ pub mod codewars {
                             .unwrap()
                             .as_u64()
                             .unwrap();
-                        info!("Got response")
+                        return Ok(my_user);
+                    } else {
+                        match response.status() {
+                            StatusCode::NOT_FOUND => return Err(Error::UserNotFound { username }),
+                            _ => {
+                                return Err(Error::CodewarsError {
+                                    message: "Error in retrieving data".to_string(),
+                                })
+                            }
+                        }
                     }
                 }
-                Err(_e) => println!("Got error"),
+                Err(e) => {
+                    println!("^^^^^^^^^^^^^^^^^^^^^^^");
+                    return Err(Error::ReqwestError { source: e });
+                }
             }
         }
     }
@@ -74,7 +87,7 @@ pub mod codewars {
 mod tests {
 
     use crate::codewars::Codewars;
-    use crate::user::User;
+    // use crate::user::User;
 
     #[test]
     fn it_works() {
@@ -82,8 +95,12 @@ mod tests {
     }
 
     #[test]
-    fn test_user_struct() {
-        let _test_user = User::new();
-        Codewars::get_user("vbmade2000".to_string());
+    fn test_get_struct() {
+        // Call a function
+        let user = Codewars::get_user("vbmade2000".to_string()).unwrap();
+
+        // Assert values
+        assert_eq!(user.name, "Malhar Vora".to_string());
+        assert_eq!(user.username, "vbmade2000".to_string());
     }
 }

@@ -3,8 +3,8 @@ pub mod user;
 pub mod codewars {
 
     use crate::user::User;
+    use log::{info, warn};
     use serde_json::Value;
-    use std::str::FromStr;
 
     // Main struct that contains all the methods
     pub struct Codewars {
@@ -28,16 +28,43 @@ pub mod codewars {
             match user_result {
                 Ok(response) => {
                     let mut my_user = User::new();
+
+                    // We create User instance only if user details successfully retrieved
                     if response.status().is_success() {
                         let user_json: Value = response.json().unwrap();
                         my_user.name =
                             String::from(user_json.get("name").unwrap().as_str().unwrap());
                         my_user.username =
                             String::from(user_json.get("username").unwrap().as_str().unwrap());
-                        println!("Got response")
+                        let user_skills = user_json.get("skills").unwrap().as_array();
+
+                        // Fill up skills vector
+                        if user_skills.is_some() {
+                            for skill in user_skills.unwrap() {
+                                my_user.skills.push(String::from(skill.as_str().unwrap()));
+                            }
+                        }
+
+                        // Fill up CodeChallenges struct
+                        let user_codechallanges = user_json
+                            .get("codeChallenges")
+                            .unwrap()
+                            .as_object()
+                            .unwrap();
+                        my_user.code_challenges.total_authored = user_codechallanges
+                            .get("totalAuthored")
+                            .unwrap()
+                            .as_u64()
+                            .unwrap();
+                        my_user.code_challenges.total_completed = user_codechallanges
+                            .get("totalCompleted")
+                            .unwrap()
+                            .as_u64()
+                            .unwrap();
+                        info!("Got response")
                     }
                 }
-                Err(e) => println!("Got error"),
+                Err(_e) => println!("Got error"),
             }
         }
     }
@@ -56,7 +83,7 @@ mod tests {
 
     #[test]
     fn test_user_struct() {
-        let test_user = User::new();
+        let _test_user = User::new();
         Codewars::get_user("vbmade2000".to_string());
     }
 }

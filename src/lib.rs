@@ -6,8 +6,10 @@ pub mod codewars {
 
     use crate::err::Error;
     use crate::user::{OverallRank, User};
+    use crate::user_challenges::CompletedChallenge;
     use reqwest::StatusCode;
     use serde_json::Value;
+    use std::vec::Vec;
 
     // Main struct that contains all the methods
     pub struct Codewars {
@@ -119,6 +121,32 @@ pub mod codewars {
                 }
                 Err(e) => {
                     return Err(Error::ReqwestError { source: e });
+                }
+            }
+        }
+
+        pub fn get_completed_challenges(username: String) {
+            let current_page = 0;
+            let url = format!(
+                "https://www.codewars.com/api/v1/users/{}/code-challenges/completed",
+                username
+            );
+            let result = reqwest::blocking::get(&url);
+            match result {
+                Ok(response) => {
+                    if response.status().is_success() {
+                        let completed_challenges: Vec<CompletedChallenge> = Vec::new();
+                        let json_data: Value = response.json().unwrap();
+                        let total_pages: u64 =
+                            json_data.get("totalPages").unwrap().as_u64().unwrap();
+
+                        println!("Got some response");
+                        println!("Got some response")
+                    }
+                }
+                Err(e) => {
+                    println!("Got an error");
+                    println!("Got an error")
                 }
             }
         }

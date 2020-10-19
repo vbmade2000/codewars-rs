@@ -37,6 +37,13 @@ pub mod codewars {
                             String::from(user_json.get("name").unwrap().as_str().unwrap());
                         my_user.username =
                             String::from(user_json.get("username").unwrap().as_str().unwrap());
+                        my_user.clan =
+                            Some(String::from(user_json.get("clan").unwrap().as_str().unwrap()));
+                        my_user.honor =
+                            user_json.get("clan").unwrap().as_i64();
+                        my_user.leaderboard_position =
+                            user_json.get("leaderboardPosition").unwrap().as_i64();
+
                         let user_skills = user_json.get("skills").unwrap().as_array();
 
                         // Fill up skills vector

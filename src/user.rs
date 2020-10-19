@@ -54,11 +54,12 @@ impl CodeChallenges {
 pub struct User {
     pub name: String,
     pub username: String,
-    pub honor: Option<i32>,
+    pub honor: Option<i64>,
     pub clan: Option<String>,
     pub skills: Vec<String>,
     pub code_challenges: CodeChallenges,
     pub ranks: Ranks,
+    pub leaderboard_position: Option<i64>,
 }
 
 impl User {
@@ -71,6 +72,7 @@ impl User {
             skills: vec![],
             code_challenges: CodeChallenges::new(),
             ranks: Ranks::new(),
+            leaderboard_position: None,
         }
     }
 }

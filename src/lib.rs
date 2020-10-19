@@ -4,7 +4,7 @@ pub mod user;
 pub mod codewars {
 
     use crate::err::Error;
-    use crate::user::User;
+    use crate::user::{OverallRank, User};
     use reqwest::StatusCode;
     use serde_json::Value;
 
@@ -77,6 +77,26 @@ pub mod codewars {
                             overall_rank.get("score").unwrap().as_u64().unwrap();
 
                         // Fill up ranks->languages struct
+                        let user_languages =
+                            user_ranks.get("languages").unwrap().as_object().unwrap();
+                        for lang in user_languages {
+                            let rank = lang.1.get("rank").unwrap().as_i64().unwrap();
+                            let name = String::from(lang.1.get("name").unwrap().as_str().unwrap());
+                            let color =
+                                String::from(lang.1.get("color").unwrap().as_str().unwrap());
+                            let score = lang.1.get("score").unwrap().as_u64().unwrap();
+                            let mut temp_overall_rank = OverallRank::new();
+                            temp_overall_rank.rank = rank;
+                            temp_overall_rank.name = name;
+                            temp_overall_rank.color = color;
+                            temp_overall_rank.score = score;
+
+                            my_user
+                                .ranks
+                                .languages
+                                .insert(lang.0.clone(), temp_overall_rank);
+                        }
+                        // my_user.ranks.overall.languages
                         return Ok(my_user);
                     } else {
                         match response.status() {

@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OverallRank {
-    pub rank: i32,
+    pub rank: i64,
     pub name: String,
     pub color: String,
-    pub score: u32,
+    pub score: u64,
 }
 
 impl OverallRank {
@@ -22,12 +23,14 @@ impl OverallRank {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Ranks {
     pub overall: OverallRank,
+    pub languages: HashMap<String, OverallRank>,
 }
 
 impl Ranks {
     pub fn new() -> Self {
         Ranks {
             overall: OverallRank::new(),
+            languages: HashMap::new(),
         }
     }
 }

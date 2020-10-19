@@ -62,6 +62,21 @@ pub mod codewars {
                             .unwrap()
                             .as_u64()
                             .unwrap();
+
+                        /* -------- Fill up ranks struct */
+                        let user_ranks = user_json.get("ranks").unwrap().as_object().unwrap();
+                        // Fill up ranks->overall struct
+                        let overall_rank = user_ranks.get("overall").unwrap().as_object().unwrap();
+                        my_user.ranks.overall.rank =
+                            overall_rank.get("rank").unwrap().as_i64().unwrap();
+                        my_user.ranks.overall.name =
+                            String::from(overall_rank.get("name").unwrap().as_str().unwrap());
+                        my_user.ranks.overall.color =
+                            String::from(overall_rank.get("color").unwrap().as_str().unwrap());
+                        my_user.ranks.overall.score =
+                            overall_rank.get("score").unwrap().as_u64().unwrap();
+
+                        // Fill up ranks->languages struct
                         return Ok(my_user);
                     } else {
                         match response.status() {
@@ -75,7 +90,6 @@ pub mod codewars {
                     }
                 }
                 Err(e) => {
-                    println!("^^^^^^^^^^^^^^^^^^^^^^^");
                     return Err(Error::ReqwestError { source: e });
                 }
             }
@@ -88,11 +102,6 @@ mod tests {
 
     use crate::codewars::Codewars;
     // use crate::user::User;
-
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 
     #[test]
     fn test_get_struct() {

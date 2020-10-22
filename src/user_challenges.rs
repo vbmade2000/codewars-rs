@@ -3,6 +3,7 @@ pub struct CompletedChallenge {
     pub name: String,
     pub slug: String,
     pub completed_languages: Vec<String>,
+    pub completed_at: String,
 }
 
 impl CompletedChallenge {
@@ -12,6 +13,7 @@ impl CompletedChallenge {
             name: "".to_string(),
             slug: "".to_string(),
             completed_languages: vec![],
+            completed_at: "".to_string(),
         }
     }
 }

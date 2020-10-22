@@ -106,8 +106,7 @@ pub mod codewars {
                                 .languages
                                 .insert(lang.0.clone(), temp_overall_rank);
                         }
-                        // my_user.ranks.overall.languages
-                        return Ok(my_user);
+                        Ok(my_user)
                     } else {
                         match response.status() {
                             StatusCode::NOT_FOUND => return Err(Error::UserNotFound { username }),
@@ -125,30 +124,76 @@ pub mod codewars {
             }
         }
 
-        pub fn get_completed_challenges(username: String) {
-            let current_page = 0;
-            let url = format!(
-                "https://www.codewars.com/api/v1/users/{}/code-challenges/completed",
-                username
-            );
-            let result = reqwest::blocking::get(&url);
-            match result {
-                Ok(response) => {
-                    if response.status().is_success() {
-                        let completed_challenges: Vec<CompletedChallenge> = Vec::new();
-                        let json_data: Value = response.json().unwrap();
-                        let total_pages: u64 =
-                            json_data.get("totalPages").unwrap().as_u64().unwrap();
-
-                        println!("Got some response");
-                        println!("Got some response")
+        pub fn get_completed_challenges(
+            username: String,
+        ) -> Result<Vec<CompletedChallenge>, Error> {
+            let mut current_page = 0;
+            let mut total_pages: Option<u64> = None;
+            let mut completed_challenges: Vec<CompletedChallenge> = Vec::new();
+            loop {
+                if total_pages.is_some() {
+                    if current_page >= total_pages.unwrap() {
+                        break;
                     }
                 }
-                Err(e) => {
-                    println!("Got an error");
-                    println!("Got an error")
+                let url = format!(
+                    "https://www.codewars.com/api/v1/users/{}/code-challenges/completed?page={}",
+                    username, current_page
+                );
+                let result = reqwest::blocking::get(&url);
+                match result {
+                    Ok(response) => {
+                        if response.status().is_success() {
+                            let json_data: Value = response.json().unwrap();
+                            let total_pages_received: u64 =
+                                json_data.get("totalPages").unwrap().as_u64().unwrap();
+                            let data = json_data.get("data").unwrap().as_array().unwrap();
+                            let total_items_received: u64 =
+                                json_data.get("totalItems").unwrap().as_u64().unwrap();
+                            if total_pages.is_none() {
+                                total_pages = Some(total_pages_received);
+                            }
+                            for d in data {
+                                let challenge_id = d.get("id").unwrap().as_str().unwrap();
+                                let challenge_name = d.get("name").unwrap().as_str().unwrap();
+                                let challenge_slug = d.get("slug").unwrap().as_str().unwrap();
+                                let challenge_completed_at =
+                                    d.get("completedAt").unwrap().as_str().unwrap();
+                                let completed_languages =
+                                    d.get("completedLanguages").unwrap().as_array().unwrap();
+                                let mut completed_challenge = CompletedChallenge::new();
+                                completed_challenge.id = String::from(challenge_id);
+                                completed_challenge.name = String::from(challenge_name);
+                                completed_challenge.slug = String::from(challenge_slug);
+                                completed_challenge.completed_at =
+                                    String::from(challenge_completed_at);
+                                for completed_language in completed_languages {
+                                    completed_challenge
+                                        .completed_languages
+                                        .push(String::from(completed_language.as_str().unwrap()));
+                                }
+                                completed_challenges.push(completed_challenge);
+                            }
+                            current_page += 1;
+                        // return Ok(completed_challenges);
+                        } else {
+                            match response.status() {
+                                StatusCode::NOT_FOUND => {
+                                    return Err(Error::UserNotFound { username })
+                                }
+                                _ => {
+                                    return Err(Error::CodewarsError {
+                                        message: "Error in retrieving data".to_string(),
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    Err(e) => return Err(Error::ReqwestError { source: e }),
                 }
+                // current_page += 1;
             }
+            Ok(completed_challenges)
         }
     }
 }
@@ -167,5 +212,11 @@ mod tests {
         // Assert values
         assert_eq!(user.name, "Malhar Vora".to_string());
         assert_eq!(user.username, "vbmade2000".to_string());
+    }
+
+    #[test]
+    fn test_get_completed_challenges() {
+        let completed_challenges = Codewars::get_completed_challenges("hobovsky".to_string());
+        assert_eq!(completed_challenges.unwrap().len(), 878);
     }
 }

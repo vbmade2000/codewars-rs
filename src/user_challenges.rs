@@ -18,7 +18,7 @@ impl CompletedChallenge {
     }
 }
 
-pub struct AuthoredChallenges {
+pub struct AuthoredChallenge {
     pub id: String,
     pub name: String,
     pub description: String,
@@ -28,9 +28,9 @@ pub struct AuthoredChallenges {
     pub languages: Vec<String>,
 }
 
-impl AuthoredChallenges {
+impl AuthoredChallenge {
     pub fn new() -> Self {
-        AuthoredChallenges {
+        AuthoredChallenge {
             id: "".to_string(),
             name: "".to_string(),
             description: "".to_string(),

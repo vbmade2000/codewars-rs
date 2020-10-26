@@ -6,7 +6,7 @@ pub mod codewars {
 
     use crate::err::Error;
     use crate::user::{OverallRank, User};
-    use crate::user_challenges::CompletedChallenge;
+    use crate::user_challenges::{AuthoredChallenge, CompletedChallenge};
     use reqwest::StatusCode;
     use serde_json::Value;
     use std::vec::Vec;
@@ -195,6 +195,95 @@ pub mod codewars {
             }
             Ok(completed_challenges)
         }
+
+        pub fn get_authored_challenges(username: String) -> Result<Vec<AuthoredChallenge>, Error> {
+            let mut authored_challenges: Vec<AuthoredChallenge> = Vec::new();
+            let url = format!(
+                "https://www.codewars.com/api/v1/users/{}/code-challenges/authored",
+                username
+            );
+            let result = reqwest::blocking::get(&url);
+            match result {
+                Ok(response) => {
+                    if response.status().is_success() {
+                        let json_data: Value = response.json().unwrap();
+                        let authored_challenges_received =
+                            json_data.get("data").unwrap().as_array().unwrap();
+                        for authored_challenge_reeived in authored_challenges_received {
+                            // Get Values
+                            let id = authored_challenge_reeived
+                                .get("id")
+                                .unwrap()
+                                .as_str()
+                                .unwrap();
+                            let name = authored_challenge_reeived
+                                .get("name")
+                                .unwrap()
+                                .as_str()
+                                .unwrap();
+                            let description = authored_challenge_reeived
+                                .get("description")
+                                .unwrap()
+                                .as_str()
+                                .unwrap();
+                            let rank = authored_challenge_reeived
+                                .get("rank")
+                                .unwrap()
+                                .as_i64()
+                                .unwrap();
+                            let rank_name = authored_challenge_reeived
+                                .get("rankName")
+                                .unwrap()
+                                .as_str()
+                                .unwrap();
+                            let tags = authored_challenge_reeived
+                                .get("tags")
+                                .unwrap()
+                                .as_array()
+                                .unwrap();
+                            let languages = authored_challenge_reeived
+                                .get("languages")
+                                .unwrap()
+                                .as_array()
+                                .unwrap();
+
+                            // Create and fill Vector for tags
+                            let mut tag_list: Vec<String> = Vec::new();
+                            for tag in tags {
+                                tag_list.push(tag.as_str().unwrap().to_string());
+                            }
+
+                            // Create and fill Vector for languages
+                            let mut language_list: Vec<String> = Vec::new();
+                            for language in languages {
+                                language_list.push(language.as_str().unwrap().to_string());
+                            }
+
+                            let mut authored_challenge = AuthoredChallenge::new();
+                            authored_challenge.id = id.to_string();
+                            authored_challenge.name = name.to_string();
+                            authored_challenge.description = description.to_string();
+                            authored_challenge.rank = rank;
+                            authored_challenge.rank_name = rank_name.to_string();
+                            authored_challenge.tags = tag_list;
+                            authored_challenge.languages = language_list;
+                            authored_challenges.push(authored_challenge);
+                        }
+                        return Ok(authored_challenges);
+                    } else {
+                        match response.status() {
+                            StatusCode::NOT_FOUND => return Err(Error::UserNotFound { username }),
+                            _ => {
+                                return Err(Error::CodewarsError {
+                                    message: "Error in retrieving data".to_string(),
+                                })
+                            }
+                        }
+                    }
+                }
+                Err(e) => return Err(Error::ReqwestError { source: e }),
+            }
+        }
     }
 }
 
@@ -217,6 +306,12 @@ mod tests {
     #[test]
     fn test_get_completed_challenges() {
         let completed_challenges = Codewars::get_completed_challenges("hobovsky".to_string());
-        assert_eq!(completed_challenges.unwrap().len(), 878);
+        // assert_eq!(completed_challenges.unwrap().len(), 878);
+    }
+
+    #[test]
+    fn test_get_authored_challenges() {
+        let _authored_challenges = Codewars::get_authored_challenges("hobovsky".to_string());
+        // assert_eq!(authoered_challenges.unwrap().len(), 878);
     }
 }

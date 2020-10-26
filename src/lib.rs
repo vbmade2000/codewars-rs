@@ -1,3 +1,4 @@
+pub mod code_challenges;
 pub mod err;
 pub mod user;
 pub mod user_challenges;

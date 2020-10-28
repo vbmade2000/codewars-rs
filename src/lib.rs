@@ -111,18 +111,14 @@ pub mod codewars {
                         Ok(my_user)
                     } else {
                         match response.status() {
-                            StatusCode::NOT_FOUND => return Err(Error::UserNotFound { username }),
-                            _ => {
-                                return Err(Error::CodewarsError {
-                                    message: "Error in retrieving data".to_string(),
-                                })
-                            }
+                            StatusCode::NOT_FOUND => Err(Error::UserNotFound { username }),
+                            _ => Err(Error::CodewarsError {
+                                message: "Error in retrieving data".to_string(),
+                            }),
                         }
                     }
                 }
-                Err(e) => {
-                    return Err(Error::ReqwestError { source: e });
-                }
+                Err(e) => Err(Error::ReqwestError { source: e }),
             }
         }
 
@@ -133,10 +129,8 @@ pub mod codewars {
             let mut total_pages: Option<u64> = None;
             let mut completed_challenges: Vec<CompletedChallenge> = Vec::new();
             loop {
-                if total_pages.is_some() {
-                    if current_page >= total_pages.unwrap() {
-                        break;
-                    }
+                if total_pages.is_some() && current_page >= total_pages.unwrap() {
+                    break;
                 }
                 let url = format!(
                     "https://www.codewars.com/api/v1/users/{}/code-challenges/completed?page={}",
@@ -175,7 +169,7 @@ pub mod codewars {
                                 completed_challenges.push(completed_challenge);
                             }
                             current_page += 1;
-                        // return Ok(completed_challenges);
+                        // Ok(completed_challenges)
                         } else {
                             match response.status() {
                                 StatusCode::NOT_FOUND => {
@@ -269,19 +263,17 @@ pub mod codewars {
                             authored_challenge.languages = language_list;
                             authored_challenges.push(authored_challenge);
                         }
-                        return Ok(authored_challenges);
+                        Ok(authored_challenges)
                     } else {
                         match response.status() {
-                            StatusCode::NOT_FOUND => return Err(Error::UserNotFound { username }),
-                            _ => {
-                                return Err(Error::CodewarsError {
-                                    message: "Error in retrieving data".to_string(),
-                                })
-                            }
+                            StatusCode::NOT_FOUND => Err(Error::UserNotFound { username }),
+                            _ => Err(Error::CodewarsError {
+                                message: "Error in retrieving data".to_string(),
+                            }),
                         }
                     }
                 }
-                Err(e) => return Err(Error::ReqwestError { source: e }),
+                Err(e) => Err(Error::ReqwestError { source: e }),
             }
         }
 
@@ -490,7 +482,7 @@ pub mod codewars {
                     } else {
                         match response.status() {
                             StatusCode::NOT_FOUND => {
-                                return Err(Error::ChallengeNotFound { challenge_title })
+                                Err(Error::ChallengeNotFound { challenge_title })
                             }
                             _ => Err(Error::CodewarsError {
                                 message: "Error in retrieving data".to_string(),
@@ -498,7 +490,7 @@ pub mod codewars {
                         }
                     }
                 }
-                Err(e) => return Err(Error::ReqwestError { source: e }),
+                Err(e) => Err(Error::ReqwestError { source: e }),
             }
         }
     }

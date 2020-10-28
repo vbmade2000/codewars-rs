@@ -5,6 +5,7 @@ pub mod user_challenges;
 
 pub mod codewars {
 
+    use crate::code_challenges::{CodeChallenge, CreatedBy, Rank, Unresolved};
     use crate::err::Error;
     use crate::user::{OverallRank, User};
     use crate::user_challenges::{AuthoredChallenge, CompletedChallenge};
@@ -285,6 +286,225 @@ pub mod codewars {
                 Err(e) => return Err(Error::ReqwestError { source: e }),
             }
         }
+
+        pub fn get_code_challenge(challenge_title: String) -> Result<CodeChallenge, Error> {
+            let url = format!(
+                "https://www.codewars.com/api/v1/code-challenges/{}",
+                challenge_title
+            );
+            let result = reqwest::blocking::get(&url);
+
+            match result {
+                Ok(response) => {
+                    if response.status().is_success() {
+                        let mut code_challenge = CodeChallenge::new();
+                        let response_json: Value = response.json().unwrap();
+
+                        // Extract single values
+                        let id = response_json
+                            .get("id")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let name = response_json
+                            .get("name")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let slug = response_json
+                            .get("slug")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let category = response_json
+                            .get("category")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let published_at = response_json
+                            .get("publishedAt")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let approved_at = response_json
+                            .get("approvedAt")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        // Extract Languages
+                        let languages_json =
+                            response_json.get("languages").unwrap().as_array().unwrap();
+                        let mut languages: Vec<String> = Vec::new();
+                        for lang in languages_json {
+                            languages.push(lang.as_str().unwrap().to_string());
+                        }
+
+                        let url = response_json
+                            .get("url")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        // Extract Rank details
+                        let rank_json = response_json.get("rank").unwrap().as_object().unwrap();
+                        let rank_id = rank_json.get("id").unwrap().as_i64().unwrap();
+                        let rank_name =
+                            rank_json.get("name").unwrap().as_str().unwrap().to_string();
+                        let rank_color = rank_json
+                            .get("color")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let mut rank = Rank::new();
+                        rank.id = rank_id;
+                        rank.name = rank_name;
+                        rank.color = rank_color;
+
+                        let created_at = response_json
+                            .get("createdAt")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        // Extract CreatedBy details
+                        let created_by_json =
+                            response_json.get("createdBy").unwrap().as_object().unwrap();
+                        let created_by_username = created_by_json
+                            .get("username")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let created_by_url = created_by_json
+                            .get("url")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let mut created_by = CreatedBy::new();
+                        created_by.username = created_by_username;
+                        created_by.url = created_by_url;
+
+                        // Extract ApprovedBy details
+                        let approved_by_json = response_json
+                            .get("approvedBy")
+                            .unwrap()
+                            .as_object()
+                            .unwrap();
+                        let approved_by_username = approved_by_json
+                            .get("username")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let approved_by_url = approved_by_json
+                            .get("url")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let mut approved_by = CreatedBy::new();
+                        approved_by.username = approved_by_username;
+                        approved_by.url = approved_by_url;
+
+                        let description = response_json
+                            .get("description")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+                        let total_attempts = response_json
+                            .get("totalAttempts")
+                            .unwrap()
+                            .as_u64()
+                            .unwrap();
+                        let total_completed = response_json
+                            .get("totalCompleted")
+                            .unwrap()
+                            .as_u64()
+                            .unwrap();
+                        let total_stars =
+                            response_json.get("totalStars").unwrap().as_u64().unwrap();
+                        let vote_score = response_json.get("voteScore").unwrap().as_u64().unwrap();
+                        let contributors_wanted = response_json
+                            .get("contributorsWanted")
+                            .unwrap()
+                            .as_bool()
+                            .unwrap();
+
+                        // Extract tags detail
+                        let tags_json = response_json.get("tags").unwrap().as_array().unwrap();
+                        let mut tags: Vec<String> = Vec::new();
+                        for tg in tags_json {
+                            tags.push(tg.as_str().unwrap().to_string());
+                        }
+
+                        // Extract Unresolved details
+                        let unresolved_json = response_json
+                            .get("unresolved")
+                            .unwrap()
+                            .as_object()
+                            .unwrap();
+                        let unresolved_issues =
+                            unresolved_json.get("issues").unwrap().as_u64().unwrap();
+                        let unresolved_suggestions = unresolved_json
+                            .get("suggestions")
+                            .unwrap()
+                            .as_u64()
+                            .unwrap();
+                        let mut unresolved = Unresolved::new();
+                        unresolved.issues = unresolved_issues;
+                        unresolved.suggestions = unresolved_suggestions;
+
+                        // Fill up CodeChallenge struct
+                        code_challenge.id = id;
+                        code_challenge.name = name;
+                        code_challenge.slug = slug;
+                        code_challenge.category = category;
+                        code_challenge.approved_at = approved_at;
+                        code_challenge.published_at = published_at;
+                        code_challenge.languages = languages;
+                        code_challenge.url = url;
+                        code_challenge.rank = rank;
+                        code_challenge.created_at = created_at;
+                        code_challenge.created_by = created_by;
+                        code_challenge.approved_by = approved_by;
+                        code_challenge.description = description;
+                        code_challenge.total_attempts = total_attempts;
+                        code_challenge.total_completed = total_completed;
+                        code_challenge.total_stars = total_stars;
+                        code_challenge.vote_score = vote_score;
+                        code_challenge.tags = tags;
+                        code_challenge.contributors_wanted = contributors_wanted;
+                        code_challenge.unresolved = unresolved;
+
+                        Ok(code_challenge)
+                    } else {
+                        match response.status() {
+                            StatusCode::NOT_FOUND => {
+                                return Err(Error::ChallengeNotFound {
+                                    challenge_title: challenge_title,
+                                })
+                            }
+                            _ => Err(Error::CodewarsError {
+                                message: "Error in retrieving data".to_string(),
+                            }),
+                        }
+                    }
+                }
+                Err(e) => return Err(Error::ReqwestError { source: e }),
+            }
+        }
     }
 }
 
@@ -314,5 +534,10 @@ mod tests {
     fn test_get_authored_challenges() {
         let _authored_challenges = Codewars::get_authored_challenges("hobovsky".to_string());
         // assert_eq!(authoered_challenges.unwrap().len(), 878);
+    }
+
+    #[test]
+    fn test_get_code_challenge() {
+        let _code_challenge = Codewars::get_code_challenge("valid-braces".to_string());
     }
 }

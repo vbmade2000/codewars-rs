@@ -12,4 +12,7 @@ pub enum Error {
 
     #[snafu(display("User {} not found", username))]
     UserNotFound { username: String },
+
+    #[snafu(display("Challenge {} not found", challenge_title))]
+    ChallengeNotFound { challenge_title: String },
 }

@@ -1,5 +1,5 @@
 pub struct Rank {
-    pub id: u64,
+    pub id: i64,
     pub name: String,
     pub color: String,
 }
@@ -60,7 +60,7 @@ pub struct CodeChallenge {
     pub total_attempts: u64,
     pub total_completed: u64,
     pub total_stars: u64,
-    pub vote_scores: u64,
+    pub vote_score: u64,
     pub tags: Vec<String>,
     pub contributors_wanted: bool,
     pub unresolved: Unresolved,
@@ -85,7 +85,7 @@ impl CodeChallenge {
             total_attempts: 0,
             total_completed: 0,
             total_stars: 0,
-            vote_scores: 0,
+            vote_score: 0,
             tags: vec![],
             contributors_wanted: false,
             unresolved: Unresolved::new(),

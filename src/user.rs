@@ -20,6 +20,12 @@ impl OverallRank {
     }
 }
 
+impl Default for OverallRank {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Ranks {
     pub overall: OverallRank,
@@ -35,6 +41,12 @@ impl Ranks {
     }
 }
 
+impl Default for Ranks {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CodeChallenges {
     pub total_authored: u64,
@@ -47,6 +59,12 @@ impl CodeChallenges {
             total_authored: 0,
             total_completed: 0,
         }
+    }
+}
+
+impl Default for CodeChallenges {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -74,5 +92,11 @@ impl User {
             ranks: Ranks::new(),
             leaderboard_position: None,
         }
+    }
+}
+
+impl Default for User {
+    fn default() -> Self {
+        Self::new()
     }
 }

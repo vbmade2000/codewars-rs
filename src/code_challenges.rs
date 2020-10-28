@@ -14,6 +14,12 @@ impl Rank {
     }
 }
 
+impl Default for Rank {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 // Also used to store ApprovedBy details
 pub struct CreatedBy {
     pub username: String,
@@ -29,6 +35,12 @@ impl CreatedBy {
     }
 }
 
+impl Default for CreatedBy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct Unresolved {
     pub issues: u64,
     pub suggestions: u64,
@@ -40,6 +52,12 @@ impl Unresolved {
             issues: 0,
             suggestions: 0,
         }
+    }
+}
+
+impl Default for Unresolved {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -90,5 +108,11 @@ impl CodeChallenge {
             contributors_wanted: false,
             unresolved: Unresolved::new(),
         }
+    }
+}
+
+impl Default for CodeChallenge {
+    fn default() -> Self {
+        Self::new()
     }
 }

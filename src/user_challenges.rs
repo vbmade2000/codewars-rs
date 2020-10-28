@@ -18,6 +18,12 @@ impl CompletedChallenge {
     }
 }
 
+impl Default for CompletedChallenge {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct AuthoredChallenge {
     pub id: String,
     pub name: String,
@@ -39,5 +45,11 @@ impl AuthoredChallenge {
             tags: vec![],
             languages: vec![],
         }
+    }
+}
+
+impl Default for AuthoredChallenge {
+    fn default() -> Self {
+        Self::new()
     }
 }

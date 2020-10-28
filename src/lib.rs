@@ -490,9 +490,7 @@ pub mod codewars {
                     } else {
                         match response.status() {
                             StatusCode::NOT_FOUND => {
-                                return Err(Error::ChallengeNotFound {
-                                    challenge_title: challenge_title,
-                                })
+                                return Err(Error::ChallengeNotFound { challenge_title })
                             }
                             _ => Err(Error::CodewarsError {
                                 message: "Error in retrieving data".to_string(),
@@ -524,14 +522,14 @@ mod tests {
 
     #[test]
     fn test_get_completed_challenges() {
-        let completed_challenges = Codewars::get_completed_challenges("hobovsky".to_string());
-        // assert_eq!(completed_challenges.unwrap().len(), 878);
+        let _completed_challenges = Codewars::get_completed_challenges("hobovsky".to_string());
+        // assert_eq!(_completed_challenges.unwrap().len(), 878);
     }
 
     #[test]
     fn test_get_authored_challenges() {
         let _authored_challenges = Codewars::get_authored_challenges("hobovsky".to_string());
-        // assert_eq!(authoered_challenges.unwrap().len(), 878);
+        // assert_eq!(_authoered_challenges.unwrap().len(), 878);
     }
 
     #[test]

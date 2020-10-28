@@ -150,8 +150,6 @@ pub mod codewars {
                             let total_pages_received: u64 =
                                 json_data.get("totalPages").unwrap().as_u64().unwrap();
                             let data = json_data.get("data").unwrap().as_array().unwrap();
-                            let total_items_received: u64 =
-                                json_data.get("totalItems").unwrap().as_u64().unwrap();
                             if total_pages.is_none() {
                                 total_pages = Some(total_pages_received);
                             }

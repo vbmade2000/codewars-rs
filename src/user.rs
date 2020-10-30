@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// A structure that holds overall rank for a user.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OverallRank {
     pub rank: i64,
@@ -10,6 +11,7 @@ pub struct OverallRank {
 }
 
 impl OverallRank {
+    /// Returns a new instance of OverallRank struct.
     pub fn new() -> Self {
         OverallRank {
             rank: 0,
@@ -21,11 +23,13 @@ impl OverallRank {
 }
 
 impl Default for OverallRank {
+    /// Returns a new instance with OverallRank struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds overall ranks and ranks in various languages for a user.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Ranks {
     pub overall: OverallRank,
@@ -33,6 +37,7 @@ pub struct Ranks {
 }
 
 impl Ranks {
+    /// Returns a new instance of Ranks struct.
     pub fn new() -> Self {
         Ranks {
             overall: OverallRank::new(),
@@ -42,11 +47,13 @@ impl Ranks {
 }
 
 impl Default for Ranks {
+    /// Returns a new instance of CodeChallenge struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds a code challenges solved by a user.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CodeChallenges {
     pub total_authored: u64,
@@ -54,6 +61,7 @@ pub struct CodeChallenges {
 }
 
 impl CodeChallenges {
+    /// Returns a new instance of CodeChallenge struct.
     pub fn new() -> Self {
         CodeChallenges {
             total_authored: 0,
@@ -63,11 +71,13 @@ impl CodeChallenges {
 }
 
 impl Default for CodeChallenges {
+    /// Returns a new instance of CodeChallenge struct.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds and represent a single Codewars user.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     pub name: String,
@@ -81,6 +91,7 @@ pub struct User {
 }
 
 impl User {
+    /// Returns a new instance of User struct.
     pub fn new() -> Self {
         User {
             name: "".to_string(),
@@ -96,6 +107,7 @@ impl User {
 }
 
 impl Default for User {
+    /// Returns a new instance of User struct with default implementation.
     fn default() -> Self {
         Self::new()
     }

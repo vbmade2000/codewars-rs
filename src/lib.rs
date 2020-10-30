@@ -13,18 +13,19 @@ pub mod codewars {
     use serde_json::Value;
     use std::vec::Vec;
 
-    // Main struct that contains all the methods
+    /// A main structure that contains all the methods.
     pub struct Codewars {
         pub token: String,
     }
 
     // Methods for Codewars struct
     impl Codewars {
+        /// Returns a new instance of Codewars struct.
         pub fn new(token: String) -> Self {
             Codewars { token }
         }
 
-        /// Retrieve user information. This method doesn't require use of token.
+        /// Retrieve a single user information from Codewars REST API. This method doesn't require use of token.
         pub fn get_user(username: String) -> Result<User, Error> {
             let url = format!("https://www.codewars.com/api/v1/users/{}", username);
 
@@ -122,6 +123,7 @@ pub mod codewars {
             }
         }
 
+        /// Retrieves all the completed challenges.
         pub fn get_completed_challenges(
             username: String,
         ) -> Result<Vec<CompletedChallenge>, Error> {
@@ -190,6 +192,7 @@ pub mod codewars {
             Ok(completed_challenges)
         }
 
+        /// Returns all the authored challenges.
         pub fn get_authored_challenges(username: String) -> Result<Vec<AuthoredChallenge>, Error> {
             let mut authored_challenges: Vec<AuthoredChallenge> = Vec::new();
             let url = format!(
@@ -277,6 +280,7 @@ pub mod codewars {
             }
         }
 
+        /// Returns a single code challenge detail.
         pub fn get_code_challenge(challenge_title: String) -> Result<CodeChallenge, Error> {
             let url = format!(
                 "https://www.codewars.com/api/v1/code-challenges/{}",

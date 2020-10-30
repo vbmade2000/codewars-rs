@@ -1,3 +1,4 @@
+/// A structure that holds a rank for code challenge.
 pub struct Rank {
     pub id: i64,
     pub name: String,
@@ -5,6 +6,7 @@ pub struct Rank {
 }
 
 impl Rank {
+    /// Returns a new instance of Rank struct
     pub fn new() -> Self {
         Rank {
             id: 0,
@@ -15,18 +17,20 @@ impl Rank {
 }
 
 impl Default for Rank {
+    /// Returns a new instance of Rank struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
-// Also used to store ApprovedBy details
+/// A structure that holds a short details of a user that created code challenge.
 pub struct CreatedBy {
     pub username: String,
     pub url: String,
 }
 
 impl CreatedBy {
+    /// Returns a new instance of CreatedBy struct
     pub fn new() -> Self {
         CreatedBy {
             username: "".to_string(),
@@ -36,17 +40,20 @@ impl CreatedBy {
 }
 
 impl Default for CreatedBy {
+    /// Returns a new instance of CreatedBy struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds unresolved issues
 pub struct Unresolved {
     pub issues: u64,
     pub suggestions: u64,
 }
 
 impl Unresolved {
+    /// Returns a new instance of Unresolved struct.
     pub fn new() -> Self {
         Unresolved {
             issues: 0,
@@ -56,11 +63,13 @@ impl Unresolved {
 }
 
 impl Default for Unresolved {
+    /// Returns a new instance of Unresolved struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds a single Codewars code challenge.
 pub struct CodeChallenge {
     pub id: String,
     pub name: String,
@@ -85,6 +94,7 @@ pub struct CodeChallenge {
 }
 
 impl CodeChallenge {
+    /// Returns a new instance of CodeChallenge struct.
     pub fn new() -> Self {
         CodeChallenge {
             id: "".to_string(),
@@ -112,6 +122,7 @@ impl CodeChallenge {
 }
 
 impl Default for CodeChallenge {
+    /// Returns a new instance of CodeChallenge struct with default values.
     fn default() -> Self {
         Self::new()
     }

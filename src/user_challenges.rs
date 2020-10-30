@@ -1,3 +1,4 @@
+/// A structure that holds a single completed challenge.
 pub struct CompletedChallenge {
     pub id: String,
     pub name: String,
@@ -7,6 +8,7 @@ pub struct CompletedChallenge {
 }
 
 impl CompletedChallenge {
+    /// Returns a new instance of CompletedChallenge struct.
     pub fn new() -> Self {
         CompletedChallenge {
             id: "".to_string(),
@@ -19,11 +21,13 @@ impl CompletedChallenge {
 }
 
 impl Default for CompletedChallenge {
+    /// Returns a new instance of CompletedChallenge struct with default values.
     fn default() -> Self {
         Self::new()
     }
 }
 
+/// A structure that holds a single authored challenge
 pub struct AuthoredChallenge {
     pub id: String,
     pub name: String,
@@ -35,6 +39,7 @@ pub struct AuthoredChallenge {
 }
 
 impl AuthoredChallenge {
+    /// Returns a new instance of AuthoredChallenge struct.
     pub fn new() -> Self {
         AuthoredChallenge {
             id: "".to_string(),
@@ -49,6 +54,7 @@ impl AuthoredChallenge {
 }
 
 impl Default for AuthoredChallenge {
+    /// Returns a new instance of AuthoredChallenge struct with default values.
     fn default() -> Self {
         Self::new()
     }

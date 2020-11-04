@@ -1,4 +1,3 @@
-use serde_json::map::Map;
 use serde_json::Value;
 
 /// A structure that holds a rank for code challenge.

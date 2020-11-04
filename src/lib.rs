@@ -5,7 +5,7 @@ pub mod user_challenges;
 
 pub mod codewars {
 
-    use crate::code_challenges::{CodeChallenge, CreatedBy, Rank, Unresolved};
+    use crate::code_challenges::CodeChallenge;
     use crate::err::Error;
     use crate::user::{OverallRank, User};
     use crate::user_challenges::{AuthoredChallenge, CompletedChallenge};
@@ -206,64 +206,9 @@ pub mod codewars {
                         let json_data: Value = response.json().unwrap();
                         let authored_challenges_received =
                             json_data.get("data").unwrap().as_array().unwrap();
-                        for authored_challenge_reeived in authored_challenges_received {
-                            // Get Values
-                            let id = authored_challenge_reeived
-                                .get("id")
-                                .unwrap()
-                                .as_str()
-                                .unwrap();
-                            let name = authored_challenge_reeived
-                                .get("name")
-                                .unwrap()
-                                .as_str()
-                                .unwrap();
-                            let description = authored_challenge_reeived
-                                .get("description")
-                                .unwrap()
-                                .as_str()
-                                .unwrap();
-                            let rank = authored_challenge_reeived
-                                .get("rank")
-                                .unwrap()
-                                .as_i64()
-                                .unwrap();
-                            let rank_name = authored_challenge_reeived
-                                .get("rankName")
-                                .unwrap()
-                                .as_str()
-                                .unwrap();
-                            let tags = authored_challenge_reeived
-                                .get("tags")
-                                .unwrap()
-                                .as_array()
-                                .unwrap();
-                            let languages = authored_challenge_reeived
-                                .get("languages")
-                                .unwrap()
-                                .as_array()
-                                .unwrap();
-
-                            // Create and fill Vector for tags
-                            let mut tag_list: Vec<String> = Vec::new();
-                            for tag in tags {
-                                tag_list.push(tag.as_str().unwrap().to_string());
-                            }
-
-                            // Create and fill Vector for languages
-                            let mut language_list: Vec<String> = Vec::new();
-                            for language in languages {
-                                language_list.push(language.as_str().unwrap().to_string());
-                            }
-
+                        for authored_challenge_received in authored_challenges_received {
                             let mut authored_challenge = AuthoredChallenge::new();
-                            authored_challenge.id = id.to_string();
-                            authored_challenge.name = name.to_string();
-                            authored_challenge.description = description.to_string();
-                            authored_challenge.rank = rank;
-                            authored_challenge.rank_name = rank_name.to_string();
-                            authored_challenge.tags = tag_list;
-                            authored_challenge.languages = language_list;
+                            authored_challenge.from_json(authored_challenge_received);
                             authored_challenges.push(authored_challenge);
                         }
                         Ok(authored_challenges)

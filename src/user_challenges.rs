@@ -1,3 +1,5 @@
+use serde_json::Value;
+
 /// A structure that holds a single completed challenge.
 pub struct CompletedChallenge {
     pub id: String,
@@ -50,6 +52,37 @@ impl AuthoredChallenge {
             tags: vec![],
             languages: vec![],
         }
+    }
+
+    ///Extract fields from serde json
+    pub fn from_json(&mut self, response_json: &Value) {
+        // Extract single fields
+        let id = response_json.get("id").unwrap().as_str().unwrap();
+        self.id = id.to_string();
+        let name = response_json.get("name").unwrap().as_str().unwrap();
+        self.name = name.to_string();
+        let description = response_json.get("description").unwrap().as_str().unwrap();
+        self.description = description.to_string();
+        let rank = response_json.get("rank").unwrap().as_i64().unwrap();
+        self.rank = rank;
+        let rank_name = response_json.get("rankName").unwrap().as_str().unwrap();
+        self.rank_name = rank_name.to_string();
+
+        // Extract tags
+        let tags = response_json.get("tags").unwrap().as_array().unwrap();
+        let mut tag_list: Vec<String> = Vec::new();
+        for tag in tags {
+            tag_list.push(tag.as_str().unwrap().to_string());
+        }
+        self.tags = tag_list;
+
+        // Extract languages
+        let languages = response_json.get("languages").unwrap().as_array().unwrap();
+        let mut lang_list: Vec<String> = Vec::new();
+        for language in languages {
+            lang_list.push(language.as_str().unwrap().to_string());
+        }
+        self.languages = lang_list;
     }
 }
 

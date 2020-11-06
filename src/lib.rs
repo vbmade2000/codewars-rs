@@ -150,24 +150,8 @@ pub mod codewars {
                                 total_pages = Some(total_pages_received);
                             }
                             for d in data {
-                                let challenge_id = d.get("id").unwrap().as_str().unwrap();
-                                let challenge_name = d.get("name").unwrap().as_str().unwrap();
-                                let challenge_slug = d.get("slug").unwrap().as_str().unwrap();
-                                let challenge_completed_at =
-                                    d.get("completedAt").unwrap().as_str().unwrap();
-                                let completed_languages =
-                                    d.get("completedLanguages").unwrap().as_array().unwrap();
                                 let mut completed_challenge = CompletedChallenge::new();
-                                completed_challenge.id = String::from(challenge_id);
-                                completed_challenge.name = String::from(challenge_name);
-                                completed_challenge.slug = String::from(challenge_slug);
-                                completed_challenge.completed_at =
-                                    String::from(challenge_completed_at);
-                                for completed_language in completed_languages {
-                                    completed_challenge
-                                        .completed_languages
-                                        .push(String::from(completed_language.as_str().unwrap()));
-                                }
+                                completed_challenge.from_json(d);
                                 completed_challenges.push(completed_challenge);
                             }
                             current_page += 1;

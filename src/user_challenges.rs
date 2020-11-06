@@ -20,6 +20,32 @@ impl CompletedChallenge {
             completed_at: "".to_string(),
         }
     }
+
+    pub fn from_json(&mut self, response_json: &Value) {
+        // Extract single fields
+        let challenge_id = response_json.get("id").unwrap().as_str().unwrap();
+        let challenge_name = response_json.get("name").unwrap().as_str().unwrap();
+        let challenge_slug = response_json.get("slug").unwrap().as_str().unwrap();
+        let challenge_completed_at = response_json.get("completedAt").unwrap().as_str().unwrap();
+
+        // Extract Vectors
+        let completed_languages = response_json
+            .get("completedLanguages")
+            .unwrap()
+            .as_array()
+            .unwrap();
+        for completed_language in completed_languages {
+            self.completed_languages
+                .push(String::from(completed_language.as_str().unwrap()));
+        }
+
+        // Fill up the structure
+        self.id = challenge_id.to_string();
+        self.name = challenge_name.to_string();
+        self.slug = challenge_slug.to_string();
+        self.completed_at = challenge_completed_at.to_string();
+        // self.completed_languages.push(completed_languages);
+    }
 }
 
 impl Default for CompletedChallenge {

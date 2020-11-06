@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::collections::HashMap;
 
 /// A structure that holds overall rank for a user.
@@ -102,6 +103,90 @@ impl User {
             code_challenges: CodeChallenges::new(),
             ranks: Ranks::new(),
             leaderboard_position: None,
+        }
+    }
+
+    /// Extrats and fill up User fields from JSON Values
+    pub fn from_json(&mut self, response_json: &Value) {
+        // Extract single fields
+        self.name = response_json
+            .get("name")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+        self.username = response_json
+            .get("username")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+        self.clan = Some(
+            response_json
+                .get("clan")
+                .unwrap()
+                .as_str()
+                .unwrap()
+                .to_string(),
+        );
+        self.honor = response_json.get("honor").unwrap().as_i64();
+        self.leaderboard_position = response_json.get("leaderboardPosition").unwrap().as_i64();
+
+        // Extract Vectors
+        let user_skills = response_json.get("skills").unwrap().as_array();
+        if user_skills.is_some() {
+            for skill in user_skills.unwrap() {
+                self.skills.push(String::from(skill.as_str().unwrap()));
+            }
+        }
+
+        // Fill up CodeChallenge structure
+        let user_codechallanges = response_json
+            .get("codeChallenges")
+            .unwrap()
+            .as_object()
+            .unwrap();
+        self.code_challenges.total_authored = user_codechallanges
+            .get("totalAuthored")
+            .unwrap()
+            .as_u64()
+            .unwrap();
+        self.code_challenges.total_completed = user_codechallanges
+            .get("totalCompleted")
+            .unwrap()
+            .as_u64()
+            .unwrap();
+
+        /* Fill up Ranks structure */
+        let user_ranks = response_json.get("ranks").unwrap().as_object().unwrap();
+        //--  Fill Rank->Overall structure
+        let overall_rank = user_ranks.get("overall").unwrap().as_object().unwrap();
+        self.ranks.overall.rank = overall_rank.get("rank").unwrap().as_i64().unwrap();
+        self.ranks.overall.name = overall_rank
+            .get("name")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+        self.ranks.overall.color =
+            String::from(overall_rank.get("color").unwrap().as_str().unwrap());
+        self.ranks.overall.score = overall_rank.get("score").unwrap().as_u64().unwrap();
+        //-- Fill up Rank->Languages Map
+        let user_languages = user_ranks.get("languages").unwrap().as_object().unwrap();
+        for lang in user_languages {
+            let rank = lang.1.get("rank").unwrap().as_i64().unwrap();
+            let name = String::from(lang.1.get("name").unwrap().as_str().unwrap());
+            let color = String::from(lang.1.get("color").unwrap().as_str().unwrap());
+            let score = lang.1.get("score").unwrap().as_u64().unwrap();
+            let mut temp_overall_rank = OverallRank::new();
+            temp_overall_rank.rank = rank;
+            temp_overall_rank.name = name;
+            temp_overall_rank.color = color;
+            temp_overall_rank.score = score;
+
+            self.ranks
+                .languages
+                .insert(lang.0.clone(), temp_overall_rank);
         }
     }
 }

@@ -17,6 +17,7 @@ impl Rank {
         }
     }
 
+    /// Extracts field values from JSON and fill up struct fields with them
     pub fn from_json(&mut self, response_json: &Value) {
         let rank_json = response_json.get("rank").unwrap().as_object().unwrap();
         let rank_id = rank_json.get("id").unwrap().as_i64().unwrap();
@@ -55,6 +56,7 @@ impl CreatedBy {
         }
     }
 
+    /// Extracts field values from JSON and fill up struct fields with them
     pub fn from_json(&mut self, response_json: &Value) {
         let created_by_json = response_json.get("createdBy").unwrap().as_object().unwrap();
         let username = created_by_json
@@ -96,6 +98,7 @@ impl Unresolved {
         }
     }
 
+    /// Extracts field values from JSON and fill up struct fields with them
     pub fn from_json(&mut self, response_json: &Value) {
         let unresolved_json = response_json
             .get("unresolved")
@@ -171,6 +174,7 @@ impl CodeChallenge {
         }
     }
 
+    /// Extracts field values from JSON and fill up struct fields with them
     pub fn from_json(&mut self, response_json: &Value) {
         // Fill up single values
         let id = response_json

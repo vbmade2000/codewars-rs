@@ -21,6 +21,7 @@ impl CompletedChallenge {
         }
     }
 
+    /// Extracts fields for a struct from supplied JSON and fill up struct fields with those values
     pub fn from_json(&mut self, response_json: &Value) {
         // Extract single fields
         let challenge_id = response_json.get("id").unwrap().as_str().unwrap();
@@ -80,7 +81,7 @@ impl AuthoredChallenge {
         }
     }
 
-    ///Extract fields from serde json
+    /// Extracts fields for a struct from supplied JSON and fill up struct fields with those values
     pub fn from_json(&mut self, response_json: &Value) {
         // Extract single fields
         let id = response_json.get("id").unwrap().as_str().unwrap();
